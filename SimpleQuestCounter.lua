@@ -4,16 +4,17 @@
 
 
 local questMaxLimit = 25 -- TODO: is it provided by WOW API?
-local questMaxLimitColor = { 255/255, 94/255, 0/255 } -- red/orange
+local questMaxLimitColor = { 252/255, 76/255, 2/255 } -- red/orange
 local questMinLimitColor = { 255/255, 255/255, 255/255 } -- pure white
 local fontTemplate = "GameFontHighlightSmall"
 local fontStringDepthLevel = "ARTWORK"
 local fontStringAlpha = 1 -- 0.0 (transparent) to 1.0 (opaque)
-local verticalOffsetToHeightFactor = 3.25 -- TODO: maybe rework it relative to fontheight and parent size
-local horizontalOffsetToWidthFactor = 1.89 -- TODO: maybe rework it relative to fontheight and parent size
+local verticalOffsetToHeightFactor = 1.9 
+local horizontalOffsetToWidthFactor = 0.15
 local shadowColor = {0, 0, 0, 0.75} -- {r,g,b,a}
 local shadowOffsetToFontHeightRatio = 0.15
 local fontStringTextFormat = "Quests: %d / %d" -- TODO: localize
+local fontSizeAdjustment = 1.75 -- multiplier relative to parent's default font size
 
 
 ----
@@ -40,9 +41,10 @@ end
 function SimpleQuestCounter_CalculateColor(questsNumber, questMaxNumber, minLimitColor, maxLimitColor)
     local result = {}
     local ratio = questsNumber / questMaxNumber
-    result[1] = math.abs(minLimitColor[1] - math.abs(minLimitColor[1] - maxLimitColor[1] ) * ratio * ratio * ratio)
-    result[2] = math.abs(minLimitColor[2] - math.abs(minLimitColor[2] - maxLimitColor[2] ) * ratio * ratio * ratio)
-    result[3] = math.abs(minLimitColor[3] - math.abs(minLimitColor[3] - maxLimitColor[3] ) * ratio * ratio * ratio)
+    ration = ratio * ratio * ratio -- cubic scale
+    result[1] = math.abs(minLimitColor[1] - math.abs(minLimitColor[1] - maxLimitColor[1] ) * ratio)
+    result[2] = math.abs(minLimitColor[2] - math.abs(minLimitColor[2] - maxLimitColor[2] ) * ratio)
+    result[3] = math.abs(minLimitColor[3] - math.abs(minLimitColor[3] - maxLimitColor[3] ) * ratio)
     return result
 end
 
@@ -59,21 +61,19 @@ local parent = WorldMapFrame.BorderFrame --WorldMapDetailFrame--WorldMapFrame
 SimpleQuestCounter_Frame = CreateFrame("Frame", nil, parent)
 local frame = SimpleQuestCounter_Frame
 
+
 -- create font string
 frame.counterFontString = frame:CreateFontString(nil, fontStringDepthLevel, fontTemplate)
 local counterFontString = frame.counterFontString
 counterFontString:SetTextColor(unpack(questMinLimitColor), fontStringAlpha)
 counterFontString:SetFormattedText(fontStringTextFormat, 99, 99) -- default text, to calculate initial dimensions
 
--- position of font string in parent, relative to font string's size
-counterFontString:SetAllPoints(true)
-local verticalOffset = (-1) * verticalOffsetToHeightFactor * counterFontString:GetHeight()
-local horizontalOffset = (-1) * counterFontString:GetWidth() / horizontalOffsetToWidthFactor
-counterFontString:SetPoint("TOPRIGHT", parent, "TOPRIGHT", horizontalOffset, verticalOffset)
+-- position of font string in frame
+counterFontString:SetPoint("CENTER", frame, "CENTER", 0, 0)
 
--- font height: double than the default for the parent frame
+-- font height: relative to the default of the parent frame
 local fontFileName, previousFontHeight, flags = counterFontString:GetFont()
-local fontHeight = previousFontHeight * 2
+local fontHeight = previousFontHeight * fontSizeAdjustment
 counterFontString:SetFont(fontFileName, fontHeight, flags)
 
 -- shadow
@@ -82,8 +82,10 @@ local shadowXOffset = fontHeight * shadowOffsetToFontHeightRatio
 local shadowYOffset =  -fontHeight * shadowOffsetToFontHeightRatio
 counterFontString:SetShadowOffset(shadowXOffset, shadowYOffset)
 
--- pack frame size to fontstring size
-frame:SetSize(counterFontString:GetWidth(),counterFontString:GetHeight())
+-- position frame to parent, relative to font size
+local toprightHorizontalOffset = counterFontString:GetWidth() * horizontalOffsetToWidthFactor
+local toprightVerticalOffset = counterFontString:GetHeight() * verticalOffsetToHeightFactor
+frame:SetPoint("TOPRIGHT", parent, "TOPRIGHT", -toprightHorizontalOffset, -toprightVerticalOffset)
 
 
 -- on update => refresh
