@@ -13,7 +13,8 @@ local MAX_QUESTS = _G["MAX_QUESTS"]
 
 -- TODO: create file-global parameter array
 local questMaxLimit = MAX_QUESTS or 25
-local questMaxLimitColor = { 252/255, 76/255, 2/255 } -- red/orange
+local questMaxLimitColor = { 252/255, 10/255, 10/255 } -- red
+local questMidLimitColor = { 255/255, 255/255, 0/255} -- yellow
 local questMinLimitColor = { 255/255, 255/255, 255/255 } -- pure white
 local fontTemplate = "GameFontHighlightSmall"
 local fontStringDepthLevel = "ARTWORK"
@@ -36,7 +37,12 @@ local tooltipLineColor = {1, 1, 1} -- white
 
 local tooltipObject = WorldMapTooltip or GameTooltip
 local worldMapSizedUp = (WORLDMAP_SETTINGS.size == WORLDMAP_WINDOWED_SIZE)
-
+hooksecurefunc("WorldMap_ToggleSizeUp", function() 
+    worldMapSizedUp = true
+end)
+hooksecurefunc("WorldMap_ToggleSizeDown", function()
+    worldMapSizedUp = false
+end)
 
 
 ----
@@ -109,20 +115,32 @@ function SimpleQuestCounter_OnUpdate(self, elapsed)
 
     local _, questsNumber = GetNumQuestLogEntries()
     counterFontString:SetFormattedText(fontStringTextFormat, questsNumber,questMaxLimit)
-    r,g,b = unpack(SimpleQuestCounter_CalculateColor(questsNumber,questMaxLimit, questMinLimitColor, questMaxLimitColor))
+    local colorScale = questsNumber / questMaxLimit
+    r,g,b = unpack(SimpleQuestCounter_CalculateColor(colorScale, questMinLimitColor, questMidLimitColor, questMaxLimitColor))
     counterFontString:SetTextColor(r,g,b, fontStringAlpha)
     SimpleQuestCounter_Frame:SetSize(w, h)
 end
 
 
 
-function SimpleQuestCounter_CalculateColor(questsNumber, questMaxNumber, minLimitColor, maxLimitColor)
+function SimpleQuestCounter_CalculateColor(colorScale, minLimitColor, midLimitColor, maxLimitColor)
     local result = {}
-    local ratio = questsNumber / questMaxNumber
-    ration = ratio * ratio * ratio -- cubic scale
-    result[1] = math.abs(minLimitColor[1] - math.abs(minLimitColor[1] - maxLimitColor[1] ) * ratio)
-    result[2] = math.abs(minLimitColor[2] - math.abs(minLimitColor[2] - maxLimitColor[2] ) * ratio)
-    result[3] = math.abs(minLimitColor[3] - math.abs(minLimitColor[3] - maxLimitColor[3] ) * ratio)
+    local startColor = minLimitColor
+    local endColor = maxLimitColor
+    
+    if (colorScale <= 0.5) then
+        endColor = midLimitColor
+        colorScale = colorScale + 0.5 -- scale correction
+    else
+        startColor = midLimitColor
+        colorScale = colorScale - 0.5
+    end
+    colorScale = colorScale * colorScale
+    -- for each color component, 1 -> r, 2 -> g, 3 -> b, 
+    for i=1,3,1 do
+        result[i] = startColor[i] + (endColor[i]-startColor[i]) * colorScale
+    end
+
     return result
 end
 
