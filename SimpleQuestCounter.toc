@@ -1,7 +1,7 @@
 ## Interface: 70100
 ## Title: SimpleQuestCounter
 ## Author: Ioannis @ Hellscream <EU>
-## Version: v. 7.1-3
+## Version: v. 7.1-4
 ## License: All Rights Reserved
 
 SimpleQuestCounter.lua
