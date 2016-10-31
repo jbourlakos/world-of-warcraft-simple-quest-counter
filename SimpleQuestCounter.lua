@@ -1,9 +1,18 @@
+
+---
+-- Imports
+----
+
+local MAX_QUESTS = _G["MAX_QUESTS"]
+
+
+
 ---
 -- Addon's parameters
 ----
 
-
-local questMaxLimit = 25 -- TODO: is it provided by WOW API?
+-- TODO: create file-global parameter array
+local questMaxLimit = MAX_QUESTS or 25
 local questMaxLimitColor = { 252/255, 76/255, 2/255 } -- red/orange
 local questMinLimitColor = { 255/255, 255/255, 255/255 } -- pure white
 local fontTemplate = "GameFontHighlightSmall"
@@ -15,11 +24,80 @@ local shadowColor = {0, 0, 0, 0.75} -- {r,g,b,a}
 local shadowOffsetToFontHeightRatio = 0.15
 local fontStringTextFormat = "Quests: %d / %d" -- TODO: localize
 local fontSizeAdjustment = 1.75 -- multiplier relative to parent's default font size
+local tooltipTitle = "Quests per category" -- TODO: localize
+local tooltipLineFormat = "%s |ce0dddd00(%d)|r" -- header (count)
+local tooltipLineColor = {1, 1, 1} -- white
+
+
+
+----
+-- Context
+----
+
+local tooltipObject = WorldMapTooltip or GameTooltip
+local worldMapSizedUp = (WORLDMAP_SETTINGS.size == WORLDMAP_WINDOWED_SIZE)
+
 
 
 ----
 -- Functions
 ----
+
+function SimpleQuestCounter_OnClick(self, button)
+    if (button == "LeftButton") then
+        SimpleQuestCounter_OnLeftClick(self,button)
+    elseif (button == "RightButton") then
+        SimpleQuestCounter_OnRightClick(self,button)
+    end
+end
+
+
+
+function SimpleQuestCounter_OnLeftClick(self,button)
+    if (worldMapSizedUp) then
+        WorldMapFrame_ToggleWindowSize()
+        worldMapSizedUp = false
+    else
+        WorldMap_ToggleSizeUp()
+        worldMapSizedUp = true
+    end
+end
+
+
+
+function SimpleQuestCounter_OnRightClick(self,button)
+
+    local function AddQuestCountPerHeader()
+        countPerHeader = {}
+        currentHeader = nil
+        for i = 1, GetNumQuestLogEntries(), 1 do
+            qTitle, qLevel, qGroup, qIsHeader, qIsCollapsed, qIsComplete, freq, qId, _, _, _, _, qIsTask, _  = GetQuestLogTitle(i)
+            if (qIsHeader) then
+                currentHeader = qTitle
+                if countPerHeader[currentHeader] == nil then -- a header might appear more than once
+                    countPerHeader[currentHeader] = 0
+                end
+            elseif (not qIsHeader and not qIsTask) then
+                countPerHeader[currentHeader] = countPerHeader[currentHeader] + 1
+            end
+        end
+        for header, count in pairs(countPerHeader) do
+            tooltipObject:AddLine(string.format(tooltipLineFormat, header, count), unpack(tooltipLineColor))
+        end
+    end
+
+    tooltipObject:SetOwner(self, "ANCHOR_CURSOR")
+    tooltipObject:SetText(tooltipTitle)
+    AddQuestCountPerHeader()
+    tooltipObject:Show()
+end
+
+
+
+function SimpleQuestCounter_OnLeave(self)
+    tooltipObject:Hide()
+end
+
 
 
 function SimpleQuestCounter_OnUpdate(self, elapsed)
@@ -52,7 +130,6 @@ end
 ----
 -- Components setup
 ----
-
 
 -- the parent of the frame
 local parent = WorldMapFrame.BorderFrame --WorldMapDetailFrame--WorldMapFrame
@@ -88,8 +165,15 @@ local toprightVerticalOffset = counterFontString:GetHeight() * verticalOffsetToH
 frame:SetPoint("TOPRIGHT", parent, "TOPRIGHT", -toprightHorizontalOffset, -toprightVerticalOffset)
 
 
+-- enable mouse
+frame:EnableMouse(true)
+
+
 -- on update => refresh
 frame:SetScript("OnUpdate", SimpleQuestCounter_OnUpdate)
+-- frame:SetScript("OnEnter", SimpleQuestCounter_OnEnter)
+frame:SetScript("OnLeave", SimpleQuestCounter_OnLeave)
+frame:SetScript("OnMouseUp", SimpleQuestCounter_OnClick)
 
 -- show components
 frame:Show()
