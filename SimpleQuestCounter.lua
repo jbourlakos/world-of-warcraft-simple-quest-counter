@@ -51,7 +51,8 @@ end)
 
 function SimpleQuestCounter_OnClick(self, button)
     if (button == "LeftButton") then
-        SimpleQuestCounter_OnLeftClick(self,button)
+         -- SimpleQuestCounter_OnLeftClick(self,button)
+         -- skip: TODO fix
     elseif (button == "RightButton") then
         SimpleQuestCounter_OnRightClick(self,button)
     end
@@ -72,6 +73,8 @@ end
 
 
 function SimpleQuestCounter_OnRightClick(self,button)
+
+    tooltipObject:Hide()
 
     local function AddQuestCountPerHeader()
         countPerHeader = {}
@@ -95,6 +98,15 @@ function SimpleQuestCounter_OnRightClick(self,button)
     tooltipObject:SetOwner(self, "ANCHOR_CURSOR")
     tooltipObject:SetText(tooltipTitle)
     AddQuestCountPerHeader()
+    tooltipObject:Show()
+end
+
+
+function SimpleQuestCounter_OnEnter(self)
+    tooltipObject:Hide() -- in case other tooltip appears
+    tooltipObject:SetOwner(self, "ANCHOR_CURSOR")
+    tooltipObject:SetText(tooltipTitle)
+    tooltipObject:AddLine("Right click for more information")
     tooltipObject:Show()
 end
 
@@ -189,7 +201,7 @@ frame:EnableMouse(true)
 
 -- on update => refresh
 frame:SetScript("OnUpdate", SimpleQuestCounter_OnUpdate)
--- frame:SetScript("OnEnter", SimpleQuestCounter_OnEnter)
+frame:SetScript("OnEnter", SimpleQuestCounter_OnEnter)
 frame:SetScript("OnLeave", SimpleQuestCounter_OnLeave)
 frame:SetScript("OnMouseUp", SimpleQuestCounter_OnClick)
 
