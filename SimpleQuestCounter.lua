@@ -257,6 +257,20 @@ frame:SetScript("OnLeave", SQC.OnLeave)
 -- frame:SetScript("OnMouseUp", SimpleQuestCounter_OnClick)
 frame:SetScript("OnMouseUp", SQC.OnClick)
 
+-- TODO: monkey fix
+QuestScrollFrame:ClearAllPoints()
+QuestScrollFrame:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT", 0, -counterFontString:GetHeight())
+QuestScrollFrame:SetPoint("BOTTOMLEFT", WorldMapFrame.ScrollContainer, "BOTTOMRIGHT", 0, 0)
+QuestScrollFrame:SetPoint("BOTTOMRIGHT", WorldMapFrame.BorderFrame, "BOTTOMRIGHT", -5, 0)
+
+QuestScrollFrame.ScrollBar:ClearAllPoints();
+QuestScrollFrame.ScrollBar:SetPoint("TOPLEFT", QuestScrollFrame, "TOPRIGHT", 0, -QuestScrollFrame.ScrollBar.ScrollUpButton:GetHeight())
+QuestScrollFrame.ScrollBar:SetPoint("BOTTOMRIGHT", WorldMapFrame.BorderFrame, "BOTTOMRIGHT", -10, QuestScrollFrame.ScrollBar.ScrollDownButton:GetHeight())
+
+QuestScrollFrame.Background:ClearAllPoints()
+QuestScrollFrame.Background:SetPoint("BOTTOMRIGHT", QuestScrollFrame,"BOTTOMRIGHT", -3, 0)
+QuestScrollFrame.Background:SetPoint("TOPLEFT", QuestScrollFrame,"TOPLEFT", 2, 0)
+
 -- show components
 frame:Show()
 counterFontString:Show()
