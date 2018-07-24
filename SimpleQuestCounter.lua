@@ -12,7 +12,7 @@ local MAX_QUESTS = _G["MAX_QUESTS"]
 ----
 
 SimpleQuestCounter = {}
-local SQC = SimpleQuestCounter
+local SQC = SimpleQuestCounter -- for convenience
 
 
 
@@ -20,7 +20,7 @@ local SQC = SimpleQuestCounter
 -- Addon's settings
 ----
 
-SQC.settings = {
+SimpleQuestCounter.settings = {
     
     questMaxLimit = MAX_QUESTS or 25,
     questMaxLimitColor = { 252/255, 10/255, 10/255 }, -- red
@@ -47,7 +47,7 @@ SQC.settings = {
 -- Context
 ----
 
-SQC.context = {
+SimpleQuestCounter.context = {
 
     tooltipObject = WorldMapTooltip or GameTooltip,
 
@@ -66,18 +66,18 @@ SQC.context = {
 -- Functions
 ----
 
-function SimpleQuestCounter_OnClick(self, button)
+SimpleQuestCounter.OnClick = function(self, button)
     if (button == "LeftButton") then
          -- SimpleQuestCounter_OnLeftClick(self,button)
          -- skip: TODO fix
     elseif (button == "RightButton") then
-        SimpleQuestCounter_OnRightClick(self,button)
+        SQC.OnRightClick(self,button)
     end
 end
 
 
 
--- function SimpleQuestCounter_OnLeftClick(self,button)
+-- SimpleQuestCounter.OnLeftClick = function(self,button)
 --     if (worldMapSizedUp) then
 --         WorldMapFrame_ToggleWindowSize()
 --         worldMapSizedUp = false
@@ -89,7 +89,7 @@ end
 
 
 
-function SimpleQuestCounter_OnRightClick(self,button)
+SimpleQuestCounter.OnRightClick = function(self, button)
     local tooltipObject = SQC.context.tooltipObject
     local tooltipLineFormat = SQC.settings.tooltipLineFormat
     local tooltipLineColor = SQC.settings.tooltipLineColor
@@ -127,7 +127,7 @@ end
 
 
 
-function SimpleQuestCounter_OnEnter(self)
+SimpleQuestCounter.OnEnter = function(self)
 
     local tooltipObject = SQC.context.tooltipObject
     local tooltipTitle = SQC.settings.tooltipTitle
@@ -142,14 +142,14 @@ end
 
 
 
-function SimpleQuestCounter_OnLeave(self)
+SimpleQuestCounter.OnLeave = function(self)
     local tooltipObject = SQC.context.tooltipObject
     tooltipObject:Hide()
 end
 
 
 
-function SimpleQuestCounter_OnUpdate(self, elapsed)
+SimpleQuestCounter.OnUpdate = function(self, elapsed)
 
     local questMaxLimit = SQC.settings.questMaxLimit
     local fontStringTextFormat = SQC.settings.fontStringTextFormat
@@ -168,7 +168,7 @@ function SimpleQuestCounter_OnUpdate(self, elapsed)
     local _, questsNumber = GetNumQuestLogEntries()
     counterFontString:SetFormattedText(fontStringTextFormat, questsNumber,questMaxLimit)
     local colorScale = questsNumber / questMaxLimit
-    local r,g,b = unpack(SimpleQuestCounter_CalculateColor(colorScale, questMinLimitColor, questMidLimitColor, questMaxLimitColor))
+    local r,g,b = unpack(SQC:CalculateColor(colorScale, questMinLimitColor, questMidLimitColor, questMaxLimitColor))
     counterFontString:SetTextColor(r,g,b, fontStringAlpha)
     SimpleQuestCounter_Frame:SetSize(w, h)
 
@@ -176,7 +176,7 @@ end
 
 
 
-function SimpleQuestCounter_CalculateColor(colorScale, minLimitColor, midLimitColor, maxLimitColor)
+SimpleQuestCounter.CalculateColor = function(self, colorScale, minLimitColor, midLimitColor, maxLimitColor)
     local result = {}
     local startColor = minLimitColor
     local endColor = maxLimitColor
@@ -196,6 +196,7 @@ function SimpleQuestCounter_CalculateColor(colorScale, minLimitColor, midLimitCo
 
     return result
 end
+
 
 
 ----
@@ -253,10 +254,11 @@ frame:EnableMouse(true)
 
 
 -- on update => refresh
-frame:SetScript("OnUpdate", SimpleQuestCounter_OnUpdate)
-frame:SetScript("OnEnter", SimpleQuestCounter_OnEnter)
-frame:SetScript("OnLeave", SimpleQuestCounter_OnLeave)
-frame:SetScript("OnMouseUp", SimpleQuestCounter_OnClick)
+frame:SetScript("OnUpdate", SQC.OnUpdate)
+frame:SetScript("OnEnter", SQC.OnEnter)
+frame:SetScript("OnLeave", SQC.OnLeave)
+-- frame:SetScript("OnMouseUp", SimpleQuestCounter_OnClick)
+frame:SetScript("OnMouseUp", SQC.OnClick)
 
 -- show components
 frame:Show()
