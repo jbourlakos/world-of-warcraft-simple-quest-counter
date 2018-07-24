@@ -36,13 +36,13 @@ local tooltipLineColor = {1, 1, 1} -- white
 ----
 
 local tooltipObject = WorldMapTooltip or GameTooltip
-local worldMapSizedUp = (WORLDMAP_SETTINGS.size == WORLDMAP_WINDOWED_SIZE)
-hooksecurefunc("WorldMap_ToggleSizeUp", function() 
-    worldMapSizedUp = true
-end)
-hooksecurefunc("WorldMap_ToggleSizeDown", function()
-    worldMapSizedUp = false
-end)
+-- local worldMapSizedUp = (WORLDMAP_SETTINGS.size == WORLDMAP_WINDOWED_SIZE)
+-- hooksecurefunc("WorldMap_ToggleSizeUp", function() 
+--     worldMapSizedUp = true
+-- end)
+-- hooksecurefunc("WorldMap_ToggleSizeDown", function()
+--     worldMapSizedUp = false
+-- end)
 
 
 ----
@@ -60,15 +60,15 @@ end
 
 
 
-function SimpleQuestCounter_OnLeftClick(self,button)
-    if (worldMapSizedUp) then
-        WorldMapFrame_ToggleWindowSize()
-        worldMapSizedUp = false
-    else
-        WorldMap_ToggleSizeUp()
-        worldMapSizedUp = true
-    end
-end
+-- function SimpleQuestCounter_OnLeftClick(self,button)
+--     if (worldMapSizedUp) then
+--         WorldMapFrame_ToggleWindowSize()
+--         worldMapSizedUp = false
+--     else
+--         WorldMap_ToggleSizeUp()
+--         worldMapSizedUp = true
+--     end
+-- end
 
 
 
