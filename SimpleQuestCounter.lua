@@ -15,6 +15,7 @@ SimpleQuestCounter.context = {
 
     maxQuests = _G["MAX_QUESTS"],
     tooltipObject = WorldMapTooltip or GameTooltip,
+    GetNumQuestLogEntries = GetNumQuestLogEntries,
 
 }
 
@@ -58,6 +59,10 @@ SimpleQuestCounter.settings = {
 -- Functions
 ----
 
+SimpleQuestCounter.GetNumQuestLogEntries = SQC.context.GetNumQuestLogEntries
+
+
+
 SimpleQuestCounter.OnClick = function(self, button)
     if (button == "LeftButton") then
          -- SimpleQuestCounter_OnLeftClick(self,button)
@@ -92,7 +97,7 @@ SimpleQuestCounter.OnRightClick = function(self, button)
     local function AddQuestCountPerHeader()
         local countPerHeader = {}
         local currentHeader = nil
-        for i = 1, GetNumQuestLogEntries(), 1 do
+        for i = 1, SQC:GetNumQuestLogEntries(), 1 do
             local qTitle, qLevel, qGroup, qIsHeader, qIsCollapsed, qIsComplete, freq, qId, _, _, _, _, qIsTask, _  = GetQuestLogTitle(i)
             if (qIsHeader) then
                 currentHeader = qTitle
@@ -157,7 +162,7 @@ SimpleQuestCounter.OnUpdate = function(self, elapsed)
     local w = counterFontString:GetWidth()
     local h = counterFontString:GetHeight()
 
-    local _, questsNumber = GetNumQuestLogEntries()
+    local _, questsNumber = SQC:GetNumQuestLogEntries()
     counterFontString:SetFormattedText(fontStringTextFormat, questsNumber,questMaxLimit)
     local colorScale = questsNumber / questMaxLimit
     local r,g,b = unpack(SQC:CalculateColor(colorScale, questMinLimitColor, questMidLimitColor, questMaxLimitColor))
