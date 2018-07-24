@@ -1,12 +1,3 @@
-
----
--- Imports
-----
-
-local MAX_QUESTS = _G["MAX_QUESTS"]
-
-
-
 ----
 -- Addon Object
 ----
@@ -16,13 +7,24 @@ local SQC = SimpleQuestCounter -- for convenience
 
 
 
+----
+-- Context
+----
+
+SimpleQuestCounter.context = {
+
+    maxQuests = _G["MAX_QUESTS"],
+    tooltipObject = WorldMapTooltip or GameTooltip,
+
+}
+
 ---
 -- Addon's settings
 ----
 
 SimpleQuestCounter.settings = {
     
-    questMaxLimit = MAX_QUESTS or 25,
+    questMaxLimit = SQC.context.maxQuests or 25,
     questMaxLimitColor = { 252/255, 10/255, 10/255 }, -- red
     questMidLimitColor = { 255/255, 255/255, 0/255}, -- yellow
     questMinLimitColor = { 255/255, 255/255, 255/255 }, -- pure white
@@ -42,16 +44,6 @@ SimpleQuestCounter.settings = {
 }
 
 
-
-----
--- Context
-----
-
-SimpleQuestCounter.context = {
-
-    tooltipObject = WorldMapTooltip or GameTooltip,
-
-}
 
 -- local worldMapSizedUp = (WORLDMAP_SETTINGS.size == WORLDMAP_WINDOWED_SIZE)
 -- hooksecurefunc("WorldMap_ToggleSizeUp", function() 
