@@ -2,6 +2,6 @@
 ## Title: SimpleQuestCounter
 ## Author: Ioannis @ Hellscream <EU>
 ## Version: v. 8.0-1-alpha
-## License: All Rights Reserved
+## License: GNU Public General License v2
 
 SimpleQuestCounter.lua
