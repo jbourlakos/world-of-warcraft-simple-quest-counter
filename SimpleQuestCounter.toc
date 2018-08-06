@@ -6,4 +6,6 @@
 
 SimpleQuestCounter.lua
 Context.lua
+Settings.lua
+QuestCounterFrame.lua
 QuestLogEntries.lua
