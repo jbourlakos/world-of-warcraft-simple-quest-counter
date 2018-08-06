@@ -1,7 +1,9 @@
 ## Interface: 80000
 ## Title: SimpleQuestCounter
-## Author: Ioannis @ Hellscream <EU>
-## Version: v. 8.0-1-alpha
+## Author: Ioannis, Lightshadow @ Hellscream <EU>
+## Version: v. 8.0-2
 ## License: GNU Public General License v2
 
 SimpleQuestCounter.lua
+Context.lua
+QuestLogEntries.lua

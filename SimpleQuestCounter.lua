@@ -6,26 +6,13 @@ SimpleQuestCounter = {}
 local SQC = SimpleQuestCounter -- for convenience
 
 
-
-----
--- Context
-----
-
-SimpleQuestCounter.context = {
-
-    maxQuests = _G["MAX_QUESTS"],
-    tooltipObject = WorldMapTooltip or GameTooltip,
-    GetNumQuestLogEntries = GetNumQuestLogEntries,
-
-}
-
 ---
 -- Addon's settings
 ----
 
 SimpleQuestCounter.settings = {
     
-    questMaxLimit = SQC.context.maxQuests or 25,
+    questMaxLimit = SQC.Context.maxQuests or 25,
     questMaxLimitColor = { 252/255, 10/255, 10/255 }, -- red
     questMidLimitColor = { 255/255, 255/255, 0/255}, -- yellow
     questMinLimitColor = { 255/255, 255/255, 255/255 }, -- pure white
@@ -59,7 +46,7 @@ SimpleQuestCounter.settings = {
 -- Functions
 ----
 
-SimpleQuestCounter.GetNumQuestLogEntries = SQC.context.GetNumQuestLogEntries
+SimpleQuestCounter.GetNumQuestLogEntries = SQC.Context.GetNumQuestLogEntries
 
 
 
@@ -87,7 +74,7 @@ end
 
 
 SimpleQuestCounter.OnRightClick = function(self, button)
-    local tooltipObject = SQC.context.tooltipObject
+    local tooltipObject = SQC.Context.tooltipObject
     local tooltipLineFormat = SQC.settings.tooltipLineFormat
     local tooltipLineColor = SQC.settings.tooltipLineColor
     local tooltipTitle = SQC.settings.tooltipTitle
@@ -97,7 +84,8 @@ SimpleQuestCounter.OnRightClick = function(self, button)
     local function AddQuestCountPerHeader()
         local countPerHeader = {}
         local currentHeader = nil
-        for i = 1, SQC:GetNumQuestLogEntries(), 1 do
+        local qAll, qOnly = SQC:GetNumQuestLogEntries()
+        for i = 1, qAll, 1 do
             local qTitle, qLevel, qGroup, qIsHeader, qIsCollapsed, qIsComplete, freq, qId, _, _, _, _, qIsTask, _  = GetQuestLogTitle(i)
             if (qIsHeader) then
                 currentHeader = qTitle
@@ -126,7 +114,7 @@ end
 
 SimpleQuestCounter.OnEnter = function(self)
 
-    local tooltipObject = SQC.context.tooltipObject
+    local tooltipObject = SQC.Context.tooltipObject
     local tooltipTitle = SQC.settings.tooltipTitle
 
     tooltipObject:Hide() -- in case other tooltip appears
@@ -140,7 +128,7 @@ end
 
 
 SimpleQuestCounter.OnLeave = function(self)
-    local tooltipObject = SQC.context.tooltipObject
+    local tooltipObject = SQC.Context.tooltipObject
     tooltipObject:Hide()
 end
 
