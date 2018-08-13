@@ -58,7 +58,7 @@ function QuestLogEntries.CalculateQuestCountPerHeader()
             if not countPerHeader[currentHeader] then -- a header might appear more than once
                 countPerHeader[currentHeader] = 0
             end
-        elseif (not isTask and not isHidden and not isBounty) then
+        elseif (not isTask and not isHidden and not isBounty and countPerHeader[currentHeader]) then
             countPerHeader[currentHeader] = countPerHeader[currentHeader] + 1
         end
     end
