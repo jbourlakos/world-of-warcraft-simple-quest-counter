@@ -4,8 +4,17 @@
 ## Version: v. 8.0-2
 ## License: GNU Public General License v2
 
+# Addon namespace
 SimpleQuestCounter.lua
+
+# Settings and Game context
 Context.lua
 Settings.lua
+
+# Modules
 QuestCounterFrame.lua
 QuestLogEntries.lua
+Utils.lua
+
+# Debugging
+Debug.lua
