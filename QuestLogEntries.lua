@@ -19,13 +19,11 @@ _G.QuestLogQuests_Update = function(poiTable)
     local qHeaderPool = QuestScrollFrame.headerFramePool
     local returnValue = nil
 
-    -- if not enough headers
-    if qHeaderPool:GetNumActive() <= 0 then
-        return Default_QuestLogQuests_Update(poiTable)
-    end
-
     -- execute default function
     returnValue = Default_QuestLogQuests_Update(poiTable)
+
+    -- if not enough headers
+    if qHeaderPool:GetNumActive() <= 0 then return returnValue end
 
     -- calculate quest count per header
     local questCountPerHeader = QuestLogEntries.CalculateQuestCountPerHeader()
@@ -47,16 +45,24 @@ function QuestLogEntries.CalculateQuestCountPerHeader()
     local countPerHeader = {}
     local currentHeader = nil
     local entriesCount, questsCount = GetNumQuestLogEntries()
-    for i = 1, entriesCount, 1 do
-        local qTitle, _, _, qIsHeader, _, _, _, _, _, _, _, _, qIsTask, _  = GetQuestLogTitle(i)
-        if (qIsHeader) then
-            currentHeader = qTitle
-            if countPerHeader[currentHeader] == nil then -- a header might appear more than once
+    
+    for questLogIndex = 1, entriesCount do
+
+        local title, level, suggestedGroup, isHeader, isCollapsed, 
+        isComplete, frequency, questID, startEvent, displayQuestID, 
+        isOnMap, hasLocalPOI, isTask, isBounty, isStory, 
+        isHidden, isScaling = GetQuestLogTitle(questLogIndex);
+
+        if (isHeader) then
+            currentHeader = title
+            if not countPerHeader[currentHeader] then -- a header might appear more than once
                 countPerHeader[currentHeader] = 0
             end
-        elseif (not qIsHeader and not qIsTask) then
+        elseif (not isTask and not isHidden and not isBounty) then
             countPerHeader[currentHeader] = countPerHeader[currentHeader] + 1
         end
     end
+
     return countPerHeader
+
 end
