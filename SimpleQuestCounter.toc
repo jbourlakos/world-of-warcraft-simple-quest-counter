@@ -1,4 +1,4 @@
-## Interface: 80001
+## Interface: 80000
 ## Title: SimpleQuestCounter
 ## Author: Ioannis, Lightshadow @ Hellscream <EU>
 ## Version: v. 8.0-2
