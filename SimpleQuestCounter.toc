@@ -1,7 +1,7 @@
 ## Interface: 80000
 ## Title: SimpleQuestCounter
 ## Author: Ioannis, Lightshadow @ Hellscream <EU>
-## Version: v. 8.0-2
+## Version: v. 8.0-6
 ## License: GNU Public General License v2
 
 # Addon namespace
