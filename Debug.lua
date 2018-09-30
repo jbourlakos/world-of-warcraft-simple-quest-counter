@@ -27,3 +27,7 @@ function Debug.PrintAllEntries()
         ))
     end
 end
+
+function Debug.UIVersion()
+     print((select(4, GetBuildInfo())));
+end
