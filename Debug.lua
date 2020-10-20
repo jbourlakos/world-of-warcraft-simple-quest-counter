@@ -1,31 +1,47 @@
 SimpleQuestCounter.Debug = {}
 local Debug = SimpleQuestCounter.Debug
 
-function Debug.PrintAllEntries()
-    
-    local entriesCount, questsCount = GetNumQuestLogEntries()
-    local format = "%3d. %s%s%s%s%s%s%s%s [%d] %s"
-    for questLogIndex = 1, entriesCount do
+local Context = SimpleQuestCounter.Context
+local Util = SimpleQuestCounter.Util
 
-        local title, level, suggestedGroup, isHeader, isCollapsed, 
-        isComplete, frequency, questID, startEvent, displayQuestID, 
-        isOnMap, hasLocalPOI, isTask, isBounty, isStory, 
-        isHidden, isScaling = GetQuestLogTitle(questLogIndex);
+function Debug.PrintStatus()
+    Util.Console.DPrintf("%s: %d", "Max quests", Context.GetMaxNumQuests())
+    Util.Console.DPrintf("%s: %d", "Max standard quests", Context.GetMaxNumStandardQuests())
+    Util.Console.DPrintf("%s: %d", "Current quest log entries", Context.GetNumQuestLogEntries())
+    Util.Console.DPrintf("%s: %d", "Current standard quest log entries", Context.GetNumStandardQuestLogEntries())
+end
 
-        print(string.format(format, 
-            questLogIndex, 
-            isHeader and "[H]" or "[ ]", 
-            isCollapsed and "[C]" or "[ ]", 
-            isComplete and "[V]" or "[ ]", 
-            isTask and "[T]" or "[ ]", 
-            isBounty and "[B]" or "[ ]", 
-            isStory and "[S]" or "[ ]", 
-            isHidden and "[X]" or "[ ]", 
-            isScaling and "[/]" or "[ ]", 
-            level, 
-            title
-        ))
+function Debug.QuestInfo(questLogIndex, attribute)
+    local questInfo = C_QuestLog.GetInfo(questLogIndex)
+    local value = questInfo[attribute]
+
+    local value_type = type(value)
+    local fmt = ""
+    if value_type == 'string' then
+        fmt = "%s: %s"
+    elseif value_type == 'number' then
+        fmt = "%s: %d"
+    elseif value_type == 'boolean' then
+        fmt = "%s: %d"
+    elseif value_type == 'nil' then
+        fmt = "%s: nil"
+    elseif value_type == 'function' then
+        fmt = "%s: function"
+    else
+        -- invalid type
     end
+
+    Util.Console.DPrintf(fmt, attribute, value)
+end
+
+function Debug.PrintAllEntries()
+
+    local questItems = Context.GetAllQuestLogEntries()
+
+    for index, questItem in pairs(questItems) do
+        Util.Console.DPrintf("[H:%d][S:%d] %s", questItem.isHeader, questItem.isStandard, questItem.title)
+    end
+
 end
 
 function Debug.UIVersion()

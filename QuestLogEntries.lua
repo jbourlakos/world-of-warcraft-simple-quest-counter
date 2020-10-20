@@ -6,6 +6,7 @@ if not QuestScrollFrame.headerFramePool then return end
 
 SimpleQuestCounter.QuestLogEntries = {}
 local QuestLogEntries = SimpleQuestCounter.QuestLogEntries
+local Context = SimpleQuestCounter.Context
 
 
 
@@ -44,25 +45,20 @@ end
 function QuestLogEntries.CalculateQuestCountPerHeader()
     local countPerHeader = {}
     local currentHeader = nil
-    local entriesCount, questsCount = GetNumQuestLogEntries()
-    
-    for questLogIndex = 1, entriesCount do
 
-        local title, level, suggestedGroup, isHeader, isCollapsed, 
-        isComplete, frequency, questID, startEvent, displayQuestID, 
-        isOnMap, hasLocalPOI, isTask, isBounty, isStory, 
-        isHidden, isScaling = GetQuestLogTitle(questLogIndex);
-
-        if (isHeader) then
-            currentHeader = title
-            if not countPerHeader[currentHeader] then -- a header might appear more than once
+    for index, questItem in pairs(Context.GetAllQuestLogEntries()) do
+        if (questItem.isHeader) then
+            currentHeader = questItem.title
+            if not countPerHeader[currentHeader] then
+                -- a header might appear more than once
                 countPerHeader[currentHeader] = 0
             end
-        elseif (not isTask and not isHidden and not isBounty and countPerHeader[currentHeader]) then
+        elseif (questItem.isStandard) then
             countPerHeader[currentHeader] = countPerHeader[currentHeader] + 1
+        else
+            -- do nothing
         end
     end
 
     return countPerHeader
-
 end

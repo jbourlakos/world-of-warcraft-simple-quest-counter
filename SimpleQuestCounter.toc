@@ -1,7 +1,8 @@
-## Interface: 80000
+## Interface: 90001
 ## Title: SimpleQuestCounter
-## Author: Ioannis, Lightshadow @ Hellscream <EU>
-## Version: v. 8.0-6
+## Author: Ioannis @ Hellscream <EU>
+## Version: v. 8.3-1
+## Notes: Thanks to Lightshadow @ Hellscream <EU>
 ## License: GNU Public General License v2
 
 # Addon namespace
@@ -11,10 +12,15 @@ SimpleQuestCounter.lua
 Context.lua
 Settings.lua
 
+# Utilities
+Util.lua
+
 # Modules
-QuestCounterFrame.lua
+QuestCounterTooltip.lua
 QuestLogEntries.lua
-Utils.lua
 
 # Debugging
 Debug.lua
+
+# Slash command
+SlashCommand.lua
