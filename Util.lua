@@ -6,6 +6,35 @@
 
 SimpleQuestCounter.Util = {}
 local Util = SimpleQuestCounter.Util
+local S = SimpleQuestCounter.Settings
+
+
+function Util.CalculateColor(questsNumber, maxQuestsNumber, minLimitColor, midLimitColor, maxLimitColor)
+    local result = {}
+    local startColor = minLimitColor
+    local endColor = maxLimitColor
+
+    local progress = questsNumber / maxQuestsNumber
+
+    if (progress <= 0.5) then
+        startColor = minLimitColor
+        endColor = midLimitColor
+        progress = progress + 0.5
+    else
+        startColor = midLimitColor
+        endColor = maxLimitColor
+        progress = progress + 0
+    end
+
+    -- for each color component, 1 -> r, 2 -> g, 3 -> b,
+    for i=1,3,1 do
+        result[i] = startColor[i] + (endColor[i]-startColor[i]) * progress*progress
+    end
+
+    return result
+end
+
+
 
 Util.Console = {}
 

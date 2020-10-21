@@ -1,7 +1,9 @@
 SimpleQuestCounter.SlashCommand = {}
 local SlashCommand = SimpleQuestCounter.SlashCommand
+
 local Util = SimpleQuestCounter.Util
 local Debug = SimpleQuestCounter.Debug
+local Quests = SimpleQuestCounter.Quests
 
 SlashCommand.baseCommandName = 'sqc'
 
@@ -23,10 +25,15 @@ function SlashCommand.Dispatch(msg, editBox)
     local command = table.remove(argv, 1)
     local params = argv
 
+    -- default command
+    if command == nil then
+        command = 'info'
+    end
+
     -- dispatch
     command = string.lower(command)
     if command == 'info' then
-        Debug.PrintStatus()
+        Quests.PrintStatus()
     elseif command == '_dbg' then
         Debug.PrintAllEntries()
     elseif command == '_q' then

@@ -1,8 +1,8 @@
 ## Interface: 90001
 ## Title: SimpleQuestCounter
 ## Author: Ioannis @ Hellscream <EU>
-## Version: v. 8.3-1
-## Notes: Thanks to Lightshadow @ Hellscream <EU>
+## Version: v. 9.0-2
+## Notes: Thanks to: Lightshadow, H0PE, sirzooro, Arezius, Bloodseeker, Astralon, Maxellftw
 ## License: GNU Public General License v2
 
 # Addon namespace
@@ -16,8 +16,10 @@ Settings.lua
 Util.lua
 
 # Modules
+Quests.lua
 QuestCounterTooltip.lua
 QuestLogEntries.lua
+ObjectiveTrackerLabel.lua
 
 # Debugging
 Debug.lua

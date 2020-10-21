@@ -28,17 +28,6 @@ function Context.GetNumQuests()
     return numQuests
 end
 
-function Context.GetNumStandardQuests()
-    -- return C_QuestLog.GetNumQuestLogEntries()
-    local count = 0
-    for index, questItem in pairs(Context.GetAllQuestLogEntries()) do
-        if questItem.isStandard then
-            count = count + 1
-        end
-    end
-    return count
-end
-
 function Context.GetAllQuestLogEntries()
     -- get quest log counters
     local numEntries = Context.GetNumShownQuestLogEntries()
@@ -56,7 +45,15 @@ function Context.GetAllQuestLogEntries()
         customItem.title = questLogItem.title
         -- is header
         customItem.isHeader = questLogItem.isHeader or questLogItem.level == 0
-        -- is a standard quest
+        -- is task
+        customItem.isTask = questLogItem.isTask
+        -- is bounty
+        customItem.isBounty = questLogItem.isBounty
+        -- is campaign
+        customItem.isCampaign = (questLogItem.campaignID ~= nil)
+        -- is hidden
+        customItem.isHidden = questLogItem.isHidden
+        -- is standard
         customItem.isStandard =
             not customItem.isHeader and
             not questLogItem.isTask and
@@ -94,4 +91,66 @@ function Context.GetQuestLogTitle(questLogIndex)
         qi.isHidden,
         qi.isScaling
     }
+end
+
+function Context.GetNumStandardQuests()
+    -- return C_QuestLog.GetNumQuestLogEntries()
+    local count = 0
+    for index, questItem in pairs(Context.GetAllQuestLogEntries()) do
+        if questItem.isStandard then
+            count = count + 1
+        end
+    end
+    return count
+end
+
+function Context.GetNumNonHeaderQuests()
+    local count = 0
+    for index, questItem in pairs(Context.GetAllQuestLogEntries()) do
+        if not questItem.isHeader then
+            count = count + 1
+        end
+    end
+    return count
+end
+
+
+function Context.GetNumCampaignQuests()
+    local count = 0
+    for index, questItem in pairs(Context.GetAllQuestLogEntries()) do
+        if questItem.isCampaign then
+            count = count + 1
+        end
+    end
+    return count
+end
+
+function Context.GetNumTaskQuests()
+    local count = 0
+    for index, questItem in pairs(Context.GetAllQuestLogEntries()) do
+        if questItem.isTask then
+            count = count + 1
+        end
+    end
+    return count
+end
+
+function Context.GetNumBountyQuests()
+    local count = 0
+    for index, questItem in pairs(Context.GetAllQuestLogEntries()) do
+        if questItem.isBounty then
+            count = count + 1
+        end
+    end
+    return count
+end
+
+function Context.GetNumHiddenQuests()
+    local count = 0
+    for index, questItem in pairs(Context.GetAllQuestLogEntries()) do
+        if questItem.isHidden then
+            count = count + 1
+        end
+    end
+    return count
 end
