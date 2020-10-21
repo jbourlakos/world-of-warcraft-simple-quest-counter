@@ -6,7 +6,7 @@ local tooltipParent = QuestScrollFrame.DetailFrame
 local Context = SimpleQuestCounter.Context
 local S = SimpleQuestCounter.Settings
 
-SimpleQuestCounter.QuestCounterTooltip = CreateFrame("Frame", nil, tooltipParent)
+SimpleQuestCounter.QuestCounterTooltip = CreateFrame("Frame", nil, tooltipParent, "InsetFrameTemplate3")
 QuestCounterTooltip = SimpleQuestCounter.QuestCounterTooltip
 
 -- basic setup
@@ -14,13 +14,9 @@ local tooltip = QuestCounterTooltip
 tooltip:SetMovable(false)
 tooltip:SetResizable(false)
 
+
 -- background and decoration
--- tooltip:SetBackdropColor(unpack(S.backdropColor))
-tooltip.Texture = tooltip:CreateTexture(nil, "BACKGROUND")
-tooltip.Texture:SetAllPoints()
--- tooltipTexture:SetColorTexture(1, 1, 1, 0.5)
-tooltip.Texture:SetColorTexture(0, 0, 0, 0.75)
-tooltip.Texture:SetVertexColor(0.5, 0.5, 0.5, 0.5)
+-- n/a
 
 -- font and text
 tooltip.FontString = tooltip:CreateFontString(nil, S.fontStringDepthDevel, S.fontTemplate)
@@ -29,10 +25,13 @@ tooltip.FontString:SetFont(fontFileName, previousFontHeight*S.fontSizeAdjustment
 tooltip.FontString:SetTextColor(unpack(S.questMinLimitColor), S.fontStringAlpha)
 tooltip.FontString:SetShadowColor(unpack(S.shadowColor))
 tooltip.FontString:SetFormattedText(S.fontStringTextFormat, 99, 99) -- default text, to calculate initial dimensions
+
+tooltip.FontString:ClearAllPoints()
 tooltip.FontString:SetPoint("CENTER", tooltip)
 
+
 -- positioning
-tooltip:SetPoint("TOPRIGHT",tooltipParent, "BOTTOMRIGHT", 0, 0)
+tooltip:SetPoint("TOPRIGHT", tooltipParent, "BOTTOMRIGHT", -5, 2)
 
 
 function QuestCounterTooltip.CalculateColor(questsNumber, maxQuestsNumber, minLimitColor, midLimitColor, maxLimitColor)
@@ -63,8 +62,8 @@ end
 
 
 local function Tooltip_OnUpdate(self)
-    local w = tooltip.FontString:GetWidth()
-    local h = tooltip.FontString:GetHeight()
+    local w = tooltip.FontString:GetWidth() * 1.10
+    local h = tooltip.FontString:GetHeight() * 1.60
 
     local questsNumber = Context.GetNumStandardQuests()
     local maxQuestsNumber = Context.GetMaxNumStandardQuests()

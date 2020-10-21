@@ -7,8 +7,7 @@ local Util = SimpleQuestCounter.Util
 function Debug.PrintStatus()
     Util.Console.DPrintf("%s: %d", "Max quests", Context.GetMaxNumQuests())
     Util.Console.DPrintf("%s: %d", "Max standard quests", Context.GetMaxNumStandardQuests())
-    Util.Console.DPrintf("%s: %d", "Current quest log entries", Context.GetNumQuestLogEntries())
-    Util.Console.DPrintf("%s: %d", "Current standard quest log entries", Context.GetNumStandardQuestLogEntries())
+    Util.Console.DPrintf("%s: %d", "Current standard quests", Context.GetNumStandardQuests())
 end
 
 function Debug.QuestInfo(questLogIndex, attribute)

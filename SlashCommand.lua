@@ -29,9 +29,7 @@ function SlashCommand.Dispatch(msg, editBox)
         Debug.PrintStatus()
     elseif command == '_dbg' then
         Debug.PrintAllEntries()
-    elseif command == '_echo' then
-        print(table.concat(params, ' '))
-    elseif command == '_qi' or command == 'q' then
+    elseif command == '_q' then
         local questLogIndex = params[1]
         local attribute = params[2]
         Debug.QuestInfo(questLogIndex, attribute)
