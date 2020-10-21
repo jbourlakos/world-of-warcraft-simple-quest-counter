@@ -1,8 +1,6 @@
-if not QuestScrollFrame then return end
-if not QuestScrollFrame.DetailFrame then return end
--- if not WorldMapTooltip and not GameTooltip then return end
+if not WorldMapFrame then return end
 
-local tooltipParent = QuestScrollFrame.DetailFrame
+local tooltipParent = WorldMapFrame
 local Context = SimpleQuestCounter.Context
 local Util = SimpleQuestCounter.Util
 local S = SimpleQuestCounter.Settings
