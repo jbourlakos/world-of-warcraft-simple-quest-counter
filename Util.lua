@@ -58,6 +58,10 @@ function Util.Console.GetDebugChatFrame()
     return DEFAULT_CHAT_FRAME
 end
 
+function Util.Console.GetCurrentChatFrame()
+    return SimpleQuestCounter.currentChatFrame or Util.Console.GetDefaultChatFrame()
+end
+
 function Util.Console.Print(...)
     local defaultChatFrame = Util.Console.GetDefaultChatFrame()
     defaultChatFrame:AddMessage(...)
@@ -74,6 +78,11 @@ end
 
 function Util.Console.DPrintf(format, ...)
     Util.Console.DPrint(string.format(format, ...))
+end
+
+function Util.Console.FPrintf(format, ...)
+    local currentChatFrame = Util.Console.GetCurrentChatFrame()
+    currentChatFrame:AddMessage(string.format(format,...))
 end
 
 Util.String = {}

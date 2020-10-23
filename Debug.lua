@@ -5,9 +5,9 @@ local Context = SimpleQuestCounter.Context
 local Util = SimpleQuestCounter.Util
 
 function Debug.PrintStatus()
-    Util.Console.DPrintf("%s: %d", "Max quests", Context.GetMaxNumQuests())
-    Util.Console.DPrintf("%s: %d", "Max standard quests", Context.GetMaxNumStandardQuests())
-    Util.Console.DPrintf("%s: %d", "Current standard quests", Context.GetNumStandardQuests())
+    Util.Console.DPrintf("%s: %d", "Max quests", Context:GetMaxNumQuests())
+    Util.Console.DPrintf("%s: %d", "Max standard quests", Context:GetMaxNumStandardQuests())
+    Util.Console.DPrintf("%s: %d", "Current standard quests", Context:GetNumQuestLogEntries())
 end
 
 function Debug.QuestInfo(questLogIndex, attribute)

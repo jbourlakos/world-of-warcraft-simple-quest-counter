@@ -1,156 +1,155 @@
 ----
 -- Context
 --
--- This module is the bridge to connect with Blizzard functionality.
+-- This module is the bridge Blizzard functionality.
 ----
 
+-- Requirements
+if not WorldMapFrame then return end
 if not C_QuestLog then return end
 if not C_QuestLog.GetMaxNumQuests then return end
+if not C_QuestLog.GetNumQuestLogEntries then return end
 
+
+-- Module definition
 SimpleQuestCounter.Context = {}
 local Context = SimpleQuestCounter.Context
 
-function Context.GetMaxNumQuests()
-    return C_QuestLog.GetMaxNumQuests()
+
+-- Cache attributes
+Context._cacheKeyPrefix = '_'
+Context._maxNumQuests = nil
+Context._maxNumStandardQuests = nil
+Context._numShownQuestLogEntries = nil
+Context._numQuestLogEntries = nil
+Context._questLogEntries = {}
+
+
+function Context:CacheKeyFor(key)
+    return (self._cacheKeyPrefix .. key)
 end
 
-function Context.GetMaxNumStandardQuests()
-    return _G["MAX_QUESTS"] or 25
-end
-
-function Context.GetNumShownQuestLogEntries()
-    local numEntries, _ = C_QuestLog.GetNumQuestLogEntries()
-    return numEntries
-end
-
-function Context.GetNumQuests()
-    local _, numQuests = C_QuestLog.GetNumQuestLogEntries()
-    return numQuests
-end
-
-function Context.GetAllQuestLogEntries()
-    -- get quest log counters
-    local numEntries = Context.GetNumShownQuestLogEntries()
-
-    -- this is the result array
-    local result = {}
-
-    -- convert each quest log item to a custom item, with custom fields
-    for questLogIndex = 1, numEntries do
-        local questLogItem = C_QuestLog.GetInfo(questLogIndex)
-
-        local customItem = {}
-
-        -- title
-        customItem.title = questLogItem.title
-        -- is header
-        customItem.isHeader = questLogItem.isHeader or questLogItem.level == 0
-        -- is task
-        customItem.isTask = questLogItem.isTask
-        -- is bounty
-        customItem.isBounty = questLogItem.isBounty
-        -- is campaign
-        customItem.isCampaign = (questLogItem.campaignID ~= nil)
-        -- is hidden
-        customItem.isHidden = questLogItem.isHidden
-        -- is standard
-        customItem.isStandard =
-            not customItem.isHeader and
-            not questLogItem.isTask and
-            not questLogItem.isHidden and
-            not questLogItem.isBounty and
-            questLogItem.campaignID == nil
-
-        -- add to result array
-        table.insert(result, customItem)
-
+-- Cache invalidator for numeric values
+function Context:_InvalidateNumeric(...)
+    for index, key in pairs(...) do
+        local cacheKey = self:_CacheKeyFor(key)
+        self[cacheKey] = nil
     end
-
-    return result
 end
 
--- Equivalent to the legacy top-level GetQuestLogTitle() function
-function Context.GetQuestLogTitle(questLogIndex)
-    local qi = C_QuestLog.GetInfo(questLogIndex)
-    return {
-        qi.title,
-        qi.level,
-        qi.suggestedGroup,
-        qi.isHeader,
-        qi.isCollapsed,
-        nil, -- qi.isComplete,
-        qi.frequency,
-        qi.questID,
-        qi.startEvent,
-        qi.displayQuestID,
-        qi.isOnMap,
-        qi.hasLocalPOI,
-        qi.isTask,
-        qi.isBounty,
-        qi.isStory,
-        qi.isHidden,
-        qi.isScaling
-    }
-end
 
-function Context.GetNumStandardQuests()
-    -- return C_QuestLog.GetNumQuestLogEntries()
-    local count = 0
-    for index, questItem in pairs(Context.GetAllQuestLogEntries()) do
-        if questItem.isStandard then
-            count = count + 1
+-- Cache invalidator for table values
+function Context:_InvalidateTable(...)
+    for tableKey, tableObj in pairs(...) do
+        local cacheKey = self:_CacheKeyFor(tableKey)
+        for index, value in pairs(self[cacheKey]) do
+            self[cacheKey][index] = nil -- nullify cell, don't reduce table size
         end
     end
-    return count
 end
 
-function Context.GetNumNonHeaderQuests()
-    local count = 0
-    for index, questItem in pairs(Context.GetAllQuestLogEntries()) do
-        if not questItem.isHeader then
-            count = count + 1
-        end
+
+function Context:_CacheNumeric(key, newValue)
+    local cacheKey = self:_CacheKeyFor(key)
+    if (newValue) then
+        self[cacheKey] = newValue
     end
-    return count
+    return self[cacheKey]
 end
 
 
-function Context.GetNumCampaignQuests()
-    local count = 0
-    for index, questItem in pairs(Context.GetAllQuestLogEntries()) do
-        if questItem.isCampaign then
-            count = count + 1
-        end
+function Context:_CacheTable(key, index, newValue)
+    local cacheKey = self:_CacheKeyFor(key)
+    if (newValue and index) then
+        self[cacheKey][index] = newValue
     end
-    return count
+    if (index) then
+        return self[cacheKey][index]
+    end
+    return self
 end
 
-function Context.GetNumTaskQuests()
-    local count = 0
-    for index, questItem in pairs(Context.GetAllQuestLogEntries()) do
-        if questItem.isTask then
-            count = count + 1
-        end
-    end
-    return count
+
+-- A "quest log update" lock and hook
+function Context._OnQuestLogUpdate()
 end
 
-function Context.GetNumBountyQuests()
-    local count = 0
-    for index, questItem in pairs(Context.GetAllQuestLogEntries()) do
-        if questItem.isBounty then
-            count = count + 1
-        end
-    end
-    return count
+
+-- Module initializer
+function Context:_Initialize()
+    self:_InvalidateNumeric(
+        'maxNumQuests',
+        'maxNumStandardQuests',
+        'numShowQuestLogEntries',
+        'numQuestLogEntries'
+    )
+    self:_InvalidateTable('questLogEntries')
+    self:GetMaxNumQuests()
+    self:GetMaxNumStandardQuests()
+
+    -- refresh hook
+    WorldMapFrame:HookScript("QUEST_LOG_UPDATE", Context._OnQuestLogUpdate)
 end
 
-function Context.GetNumHiddenQuests()
-    local count = 0
-    for index, questItem in pairs(Context.GetAllQuestLogEntries()) do
-        if questItem.isHidden then
-            count = count + 1
-        end
+----
+-- Module API
+----
+
+function Context:GetMaxNumQuests()
+    if (not self:_CacheNumeric('maxNumQuests')) then
+        self:_CacheNumeric('maxNumQuests', C_QuestLog.GetMaxNumQuests())
     end
-    return count
+    return self:_CacheNumeric('maxNumQuests')
 end
+
+
+function Context:GetMaxNumStandardQuests()
+    if (not self:_CacheNumeric('maxNumStandardQuests')) then
+        self:_CacheNumeric('maxNumStandardQuests', _G["MAX_QUESTS"] or 25)
+    end
+    return self:_CacheNumeric('maxNumStandardQuests')
+end
+
+
+function Context:GetNumShownQuestLogEntries()
+    if (not self:_CacheNumeric('numShownQuestLogEntries')) then
+        local num, _ = C_QuestLog.GetNumQuestLogEntries()
+        self:_CacheNumeric('numShownQuestLogEntries', num)
+    end
+    return self:_CacheNumeric('numShownQuestLogEntries')
+end
+
+
+function Context:GetNumQuestLogEntries()
+    if (not self:_CacheNumeric('numQuestLogEntries')) then
+        local _, num = C_QuestLog.GetNumQuestLogEntries()
+        self:_CacheNumeric('numQuestLogEntries', num)
+    end
+    return self:_CacheNumeric('numQuestLogEntries')
+end
+
+
+function Context:GetQuestLogEntries()
+
+    local function PopulateQuestLogEntries()
+        local questLogEntries
+        local numEntries = self:GetNumShownQuestLogEntries()
+        for questLogIndex = 1, numEntries do
+            questLogEntries[questLogIndex] = C_QuestLog.GetInfo(questLogIndex)
+        end
+        return questLogEntries
+    end
+
+    local tableObj = self:_CacheTable('questLogEntries')
+    if (not tableObj) then
+        tableObj = self:_CacheTable('questLogEntries', PopulateQuestLogEntries())
+    end
+    return tableObj
+end
+
+
+----
+-- Initialize module
+----
+
+Context:_Initialize()

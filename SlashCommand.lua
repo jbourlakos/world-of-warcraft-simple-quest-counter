@@ -3,7 +3,7 @@ local SlashCommand = SimpleQuestCounter.SlashCommand
 
 local Util = SimpleQuestCounter.Util
 local Debug = SimpleQuestCounter.Debug
-local Quests = SimpleQuestCounter.Quests
+-- local Quests = SimpleQuestCounter.Quests
 
 SlashCommand.baseCommandName = 'sqc'
 
@@ -20,6 +20,9 @@ function SlashCommand.UnsupportedCommand(cmd)
 end
 
 function SlashCommand.Dispatch(msg, editBox)
+    -- mark the current chat frame
+    SimpleQuestCounter.currentChatFrame = editBox and editBox.chatFrame
+
     -- parse command and args
     local argv = Util.String.Split(msg)
     local command = table.remove(argv, 1)
@@ -33,13 +36,18 @@ function SlashCommand.Dispatch(msg, editBox)
     -- dispatch
     command = string.lower(command)
     if command == 'info' then
-        Quests.PrintStatus()
+        (Quests or Debug).PrintStatus()
     elseif command == '_dbg' then
         Debug.PrintAllEntries()
     elseif command == '_q' then
         local questLogIndex = params[1]
         local attribute = params[2]
         Debug.QuestInfo(questLogIndex, attribute)
+    elseif command == '_select' then
+        local predicate = params[1]
+        Quests.Select(predicate)
+    elseif command == '_all' then
+        Quests.All()
     else
         SlashCommand.UnsupportedCommand(msg)
     end
