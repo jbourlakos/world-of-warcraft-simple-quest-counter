@@ -35,10 +35,10 @@ end
 
 function Debug.PrintAllEntries()
 
-    local questItems = Context.GetAllQuestLogEntries()
+    local questItems = Context:GetQuestLogEntries()
 
     for index, questItem in pairs(questItems) do
-        Util.Console.DPrintf("[H:%d][S:%d] %s", questItem.isHeader, questItem.isStandard, questItem.title)
+        Util.Console.DPrintf("[H:%d] %s", questItem.isHeader, questItem.title)
     end
 
 end

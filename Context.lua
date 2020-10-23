@@ -22,10 +22,10 @@ Context._maxNumQuests = nil
 Context._maxNumStandardQuests = nil
 Context._numShownQuestLogEntries = nil
 Context._numQuestLogEntries = nil
-Context._questLogEntries = {}
+Context._questLogEntries = nil
 
 
-function Context:CacheKeyFor(key)
+function Context:_CacheKeyFor(key)
     return (self._cacheKeyPrefix .. key)
 end
 
@@ -72,6 +72,8 @@ end
 
 -- A "quest log update" lock and hook
 function Context._OnQuestLogUpdate()
+    self:_InvalidateTable('questLogEntries')
+    self:GetQuestLogEntries()
 end
 
 
@@ -83,10 +85,12 @@ function Context:_Initialize()
         'numShowQuestLogEntries',
         'numQuestLogEntries'
     )
-    self:_InvalidateTable('questLogEntries')
     self:GetMaxNumQuests()
     self:GetMaxNumStandardQuests()
-
+    self:GetNumShownQuestLogEntries()
+    self:GetNumQuestLogEntries()
+    self:_InvalidateTable('questLogEntries')
+    self:GetQuestLogEntries()
     -- refresh hook
     WorldMapFrame:HookScript("QUEST_LOG_UPDATE", Context._OnQuestLogUpdate)
 end
@@ -129,20 +133,20 @@ function Context:GetNumQuestLogEntries()
 end
 
 
-function Context:GetQuestLogEntries()
-
-    local function PopulateQuestLogEntries()
-        local questLogEntries
-        local numEntries = self:GetNumShownQuestLogEntries()
-        for questLogIndex = 1, numEntries do
-            questLogEntries[questLogIndex] = C_QuestLog.GetInfo(questLogIndex)
-        end
-        return questLogEntries
+function Context:_PopulateQuestLogEntries()
+    local questLogEntries = {}
+    local numEntries = self:GetNumShownQuestLogEntries()
+    for questLogIndex = 1, numEntries do
+        questLogEntries[questLogIndex] = C_QuestLog.GetInfo(questLogIndex)
     end
+    return questLogEntries
+end
 
+
+function Context:GetQuestLogEntries()
     local tableObj = self:_CacheTable('questLogEntries')
     if (not tableObj) then
-        tableObj = self:_CacheTable('questLogEntries', PopulateQuestLogEntries())
+        tableObj = self:_CacheTable('questLogEntries', self:_PopulateQuestLogEntries())
     end
     return tableObj
 end
