@@ -9,18 +9,17 @@
 SimpleQuestCounter.lua
 
 # Settings and Game context
-Context.lua
 Settings.lua
 
 # Utilities
 Util.lua
 
 # Modules
-# Quest.lua
-# Quests.lua
-# QuestCounterTooltip.lua
-# QuestLogEntries.lua
-# ObjectiveTrackerLabel.lua
+Quests.lua
+Ui.lua
+Ui/QuestCounterFrame.lua
+# Ui/QuestLogEntries.lua
+# Ui/ObjectiveTrackerLabel.lua
 
 # Debugging
 Debug.lua

@@ -1,4 +1,4 @@
----
+----
 -- Util
 --
 -- Various general purpose functions
@@ -96,4 +96,22 @@ function Util.String.Split(inputstr, sep)
         table.insert(t, str)
     end
     return t
+end
+
+
+Util.Table = {}
+
+function Util.Table.Select(t, predicate)
+    local result = {}
+    for index, elem in pairs(t) do
+        local type_value = type(predicate)
+        if ( type_value == 'string' and elem[predicate] ) then
+            table.insert(result, elem)
+        elseif ( type_value == 'function' and predicate(elem, index, t) ) then
+            table.insert(result, elem)
+        else
+            -- do nothing TODO: emit error?
+        end
+    end
+    return result
 end

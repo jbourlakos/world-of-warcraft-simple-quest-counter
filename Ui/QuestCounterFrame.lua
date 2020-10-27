@@ -1,15 +1,20 @@
 if not WorldMapFrame then return end
-
 local tooltipParent = WorldMapFrame
-local Context = SimpleQuestCounter.Context
+
+----
+-- Quest counter frame
+----
+
+SimpleQuestCounter.Ui.QuestCounterFrame = CreateFrame("Frame", nil, tooltipParent, "InsetFrameTemplate3")
+QuestCounterFrame = SimpleQuestCounter.Ui.QuestCounterFrame
+
+-- Requirements
+local Quests = SimpleQuestCounter.Quests
 local Util = SimpleQuestCounter.Util
 local S = SimpleQuestCounter.Settings
 
-SimpleQuestCounter.QuestCounterTooltip = CreateFrame("Frame", nil, tooltipParent, "InsetFrameTemplate3")
-QuestCounterTooltip = SimpleQuestCounter.QuestCounterTooltip
-
 -- basic setup
-local tooltip = QuestCounterTooltip
+local tooltip = QuestCounterFrame
 tooltip:SetMovable(false)
 tooltip:SetResizable(false)
 
@@ -32,13 +37,12 @@ tooltip.FontString:SetPoint("CENTER", tooltip)
 -- positioning
 tooltip:SetPoint("TOPRIGHT", tooltipParent, "BOTTOMRIGHT", -5, 2)
 
-
-local function Tooltip_OnUpdate(self)
+function tooltip:RefreshFontString()
     local w = tooltip.FontString:GetWidth() * 1.10
     local h = tooltip.FontString:GetHeight() * 1.60
 
-    local questsNumber = Context.GetNumStandardQuests()
-    local maxQuestsNumber = Context.GetMaxNumStandardQuests()
+    local questsNumber = Quests:GetNumStandardQuests()
+    local maxQuestsNumber = Quests:GetMaxNumStandardQuests()
     tooltip.FontString:SetFormattedText(S.fontStringTextFormat, questsNumber, maxQuestsNumber)
 
     local colorScale = questsNumber / maxQuestsNumber
@@ -48,4 +52,14 @@ local function Tooltip_OnUpdate(self)
     tooltip:SetSize(w, h)
 end
 
-tooltip:HookScript("OnUpdate", Tooltip_OnUpdate)
+local function QuestCounterFrame_OnUpdate(self, event, ...)
+    if ( event == "QUEST_LOG_UPDATE" ) then
+        tooltip:RefreshFontString()
+        Util.Console.Printf("QuestCounterFrame: QUEST_LOG_UPDATE")
+    end
+end
+
+
+-- tooltip:HookScript("OnUpdate", QuestCounterFrame_OnUpdate)
+tooltip:RegisterEvent("QUEST_LOG_UPDATE")
+tooltip:HookScript("OnEvent", QuestCounterFrame_OnUpdate)

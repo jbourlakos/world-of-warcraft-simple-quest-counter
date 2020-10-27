@@ -1,13 +1,13 @@
 SimpleQuestCounter.Debug = {}
 local Debug = SimpleQuestCounter.Debug
 
-local Context = SimpleQuestCounter.Context
+local Quests = SimpleQuestCounter.Quests
 local Util = SimpleQuestCounter.Util
 
 function Debug.PrintStatus()
-    Util.Console.DPrintf("%s: %d", "Max quests", Context:GetMaxNumQuests())
-    Util.Console.DPrintf("%s: %d", "Max standard quests", Context:GetMaxNumStandardQuests())
-    Util.Console.DPrintf("%s: %d", "Current standard quests", Context:GetNumQuestLogEntries())
+    Util.Console.DPrintf("%s: %d", "Max quests", Quests:GetMaxNumQuests())
+    Util.Console.DPrintf("%s: %d", "Max standard quests", Quests:GetMaxNumStandardQuests())
+    Util.Console.DPrintf("%s: %d", "Current standard quests", Quests:GetNumQuestLogEntries())
 end
 
 function Debug.QuestInfo(questLogIndex, attribute)
@@ -35,7 +35,7 @@ end
 
 function Debug.PrintAllEntries()
 
-    local questItems = Context:GetQuestLogEntries()
+    local questItems = Quests:GetQuestLogEntries()
 
     for index, questItem in pairs(questItems) do
         Util.Console.DPrintf("[H:%d] %s", questItem.isHeader, questItem.title)

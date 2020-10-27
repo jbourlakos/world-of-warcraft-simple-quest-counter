@@ -8,8 +8,8 @@ local S = SimpleQuestCounter.Settings
 local questHeader = ObjectiveTrackerBlocksFrame.QuestHeader
 
 local function QuestHeader_OnUpdate(self)
-    local questsNumber = Context.GetNumStandardQuests()
-    local maxQuestsNumber = Context.GetMaxNumStandardQuests()
+    local questsNumber = Context:GetNumStandardQuests()
+    local maxQuestsNumber = Context:GetMaxNumStandardQuests()
 
     questHeader.Text.originalText = questHeader.Text:GetText()
     questHeader.Text:SetFormattedText(S.fontStringTextFormat, questsNumber, maxQuestsNumber)

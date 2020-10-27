@@ -1,11 +1,25 @@
+----
+-- Simple Quest Counter's slash command
+----
+
+
+-- Module definition
 SimpleQuestCounter.SlashCommand = {}
 local SlashCommand = SimpleQuestCounter.SlashCommand
 
+-- Requirements
 local Util = SimpleQuestCounter.Util
+local Quests = SimpleQuestCounter.Quests
 local Debug = SimpleQuestCounter.Debug
--- local Quests = SimpleQuestCounter.Quests
 
+
+-- Attributes
 SlashCommand.baseCommandName = 'sqc'
+
+
+----
+-- Module API
+----
 
 function SlashCommand.Value()
     return "/"..SlashCommand.baseCommandName
@@ -54,7 +68,11 @@ function SlashCommand.Dispatch(msg, editBox)
     end
 end
 
+
+----
+-- Initialize module
+----
+
 SLASH_SQC1 = SlashCommand.Value()
--- SLASH_SQC2 = < other value >
 
 SlashCmdList[SlashCommand.GlovalValue()] = SlashCommand.Dispatch
