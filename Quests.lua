@@ -236,7 +236,6 @@ end
 
 function Quests._OnQuestsEvent(self, event, ...)
     Quests:FetchAll()
-    Util.Console.Printf("Quests: " .. event)
 end
 
 -- Quests.eventFrame:RegisterEvent("QUEST_LOG_UPDATE")
