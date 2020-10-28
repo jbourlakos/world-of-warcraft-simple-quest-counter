@@ -6,10 +6,11 @@ local tooltipParent = WorldMapFrame
 ----
 
 SimpleQuestCounter.Ui.QuestCounterFrame = CreateFrame("Frame", nil, tooltipParent, "InsetFrameTemplate3")
-QuestCounterFrame = SimpleQuestCounter.Ui.QuestCounterFrame
+local QuestCounterFrame = SimpleQuestCounter.Ui.QuestCounterFrame
 
 -- Requirements
 local Quests = SimpleQuestCounter.Quests
+local Events = SimpleQuestCounter.Events
 local Util = SimpleQuestCounter.Util
 local S = SimpleQuestCounter.Settings
 
@@ -37,7 +38,7 @@ tooltip.FontString:SetPoint("CENTER", tooltip)
 -- positioning
 tooltip:SetPoint("TOPRIGHT", tooltipParent, "BOTTOMRIGHT", -5, 2)
 
-function tooltip:RefreshFontString()
+function tooltip._OnQuestsEvent()
     local w = tooltip.FontString:GetWidth() * 1.10
     local h = tooltip.FontString:GetHeight() * 1.60
 
@@ -52,14 +53,9 @@ function tooltip:RefreshFontString()
     tooltip:SetSize(w, h)
 end
 
-local function QuestCounterFrame_OnUpdate(self, event, ...)
-    if ( event == "QUEST_LOG_UPDATE" ) then
-        tooltip:RefreshFontString()
-        Util.Console.Printf("QuestCounterFrame: QUEST_LOG_UPDATE")
-    end
-end
 
+----
+-- Initialize module
+----
 
--- tooltip:HookScript("OnUpdate", QuestCounterFrame_OnUpdate)
-tooltip:RegisterEvent("QUEST_LOG_UPDATE")
-tooltip:HookScript("OnEvent", QuestCounterFrame_OnUpdate)
+Events:SubscribeForQuestsEvent(tooltip, tooltip._OnQuestsEvent)

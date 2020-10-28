@@ -15,11 +15,12 @@ Settings.lua
 Util.lua
 
 # Modules
+Events.lua
 Quests.lua
 Ui.lua
 Ui/QuestCounterFrame.lua
-# Ui/QuestLogEntries.lua
-# Ui/ObjectiveTrackerLabel.lua
+Ui/QuestLogEntries.lua
+Ui/ObjectiveTrackerLabel.lua
 
 # Debugging
 Debug.lua

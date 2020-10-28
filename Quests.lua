@@ -16,6 +16,7 @@ if not WorldMapFrame then
 else
     Quests.eventFrame = WorldMapFrame
 end
+local Events = SimpleQuestCounter.Events
 local Util = SimpleQuestCounter.Util
 
 
@@ -31,14 +32,6 @@ Quests.questLogEntries = nil
 ----
 -- Module API
 ----
-
-function Quests._OnEvent(self, event, ...)
-    if ( event == "QUEST_LOG_UPDATE" ) then
-        Quests:FetchAll()
-        Util.Console.Printf("Quests: QUEST_LOG_UPDATE")
-    end
-end
-
 
 function Quests:PrintStatus()
     local maxNumStandardQuests = Quests:GetMaxNumStandardQuests()
@@ -172,6 +165,11 @@ end
 
 function Quests:PopulateQuestLogEntries()
     self.questLogEntries = self.questLogEntries or {}
+    -- nullify array entries
+    for index = 1, table.getn(self.questLogEntries) do
+        self.questLogEntries[index] = nil
+    end
+    -- populate with every entry
     local numEntries = self:GetNumShownQuestLogEntries()
     for questLogIndex = 1, numEntries do
         -- Blizzard's data
@@ -236,5 +234,11 @@ end
 -- Initialize module
 ----
 
-Quests.eventFrame:RegisterEvent("QUEST_LOG_UPDATE")
-Quests.eventFrame:HookScript("OnEvent", Quests._OnEvent)
+function Quests._OnQuestsEvent(self, event, ...)
+    Quests:FetchAll()
+    Util.Console.Printf("Quests: " .. event)
+end
+
+-- Quests.eventFrame:RegisterEvent("QUEST_LOG_UPDATE")
+-- Quests.eventFrame:HookScript("OnEvent", Quests._OnEvent)
+Events:SubscribeForQuestsEvent(Quests.eventFrame, Quests._OnQuestsEvent)

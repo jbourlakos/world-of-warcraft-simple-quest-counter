@@ -1,44 +1,13 @@
+
+SimpleQuestCounter.Ui.QuestLogEntries = {}
+local QuestLogEntries = SimpleQuestCounter.Ui.QuestLogEntries
+
 if not QuestLogQuests_Update then return end
 if not QuestScrollFrame then return end
 if not QuestScrollFrame.headerFramePool then return end
 
-
-
-SimpleQuestCounter.QuestLogEntries = {}
-local QuestLogEntries = SimpleQuestCounter.QuestLogEntries
-local Context = SimpleQuestCounter.Context
-
-
-
--- override the default QuestLogQuests_Update global function (from QuestMapFrame.lua)
--- first, store the default implementation
-QuestLogEntries.__QuestLogQuests_Update = QuestLogQuests_Update
--- then, override
-_G.QuestLogQuests_Update = function(poiTable)
-
-    local Default_QuestLogQuests_Update = QuestLogEntries.__QuestLogQuests_Update
-    local qHeaderPool = QuestScrollFrame.headerFramePool
-    local returnValue = nil
-
-    -- execute default function
-    returnValue = Default_QuestLogQuests_Update(poiTable)
-
-    -- if not enough headers
-    if qHeaderPool:GetNumActive() <= 0 then return returnValue end
-
-    -- calculate quest count per header
-    local questCountPerHeader = QuestLogEntries.CalculateQuestCountPerHeader()
-
-    -- enumerate all quest headers
-    for currentQHeader, _ in qHeaderPool:EnumerateActive() do
-        local title = currentQHeader:GetText()
-        title = string.format("(|cFFFFD100%d|r) %s", questCountPerHeader[title], title)
-        currentQHeader:SetText(title)
-    end
-
-    return returnValue
-
-end
+local Events = SimpleQuestCounter.Events
+local Quests = SimpleQuestCounter.Quests
 
 
 
@@ -46,7 +15,7 @@ function QuestLogEntries.CalculateQuestCountPerHeader()
     local countPerHeader = {}
     local currentHeader = nil
 
-    for index, questItem in pairs(Context.GetAllQuestLogEntries()) do
+    for index, questItem in pairs(Quests:GetQuestLogEntries()) do
         if (questItem.isHeader) then
             currentHeader = questItem.title
             if not countPerHeader[currentHeader] then
@@ -62,3 +31,28 @@ function QuestLogEntries.CalculateQuestCountPerHeader()
 
     return countPerHeader
 end
+
+
+
+----
+-- Initialize module
+----
+function QuestLogEntries._OnQuestsEvent(self, event, ...)
+    local qHeaderPool = QuestScrollFrame.headerFramePool
+
+    -- if not enough headers
+    if qHeaderPool:GetNumActive() <= 0 then return end
+
+    -- calculate quest count per header
+    local questCountPerHeader = QuestLogEntries.CalculateQuestCountPerHeader()
+
+    -- enumerate all quest headers
+    for currentQHeader, _ in qHeaderPool:EnumerateActive() do
+        local title = currentQHeader:GetText()
+        title = string.format("(|cFFFFD100%d|r) %s", questCountPerHeader[title], title)
+        currentQHeader:SetText(title)
+    end
+
+end
+
+Events:SubscribeForQuestsEvent(QuestScrollFrame, QuestLogEntries._OnQuestsEvent)
