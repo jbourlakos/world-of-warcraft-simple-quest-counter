@@ -1,7 +1,7 @@
-## Interface: 90001
-## Title: SimpleQuestCounter
-## Author: Ioannis-Hellscream<EU> (rhetbull @ Twitch)
-## Version: v. 9.0-4
+## Interface: 90002
+## Title: Simple Quest Counter
+## Author:  Rhetbull <Ioannis-Hellscream.EU>
+## Version: v. 9.0-5
 ## Notes: A Simple Quest Counter (SQC) for Blizzard's default Map & Quests Log. Neither shiny, nor heavy!|nThanks to: |cc58eb2ffLightshadow, H0PE, sirzooro, Arezius, Bloodseeker, Astralon, Maxellftw
 ## License: GNU Public General License v2
 
