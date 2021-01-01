@@ -53,7 +53,8 @@ function SlashCommand.Dispatch(msg, editBox)
         (Quests or Debug).PrintStatus()
     elseif command == '_dbg' then
         local functionName = params[1]
-        Debug[functionName]()
+        table.remove(params, 1)
+        Debug[functionName](params)
     elseif command == '_q' then
         local questLogIndex = params[1]
         local attribute = params[2]

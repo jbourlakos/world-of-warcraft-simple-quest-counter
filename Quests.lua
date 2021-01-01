@@ -178,20 +178,28 @@ function Quests:PopulateQuestLogEntries()
         -- fetch Blizzard's data for each quest log entry
         self.questLogEntries[questLogIndex] = C_QuestLog.GetInfo(questLogIndex)
         local qle = self.questLogEntries[questLogIndex]
+        local qTagInfo = C_QuestLog.GetQuestTagInfo(qle.questID)
         -- attach custom quest log entry attributes
 
         qle.isLikeHeader = (qle.isHeader or qle.level == 0)
 
         qle.isCampaign = (qle.campaignID ~= nil)
 
-        qle.isShadowlandsCampaign = qle.isCampaign and qle.level > 50 and qle.level <= 60
+        qle.isShadowlandsLevel = qle.level > 50 and qle.level <= 60
+
+        qle.isShadowlandsCovenantCalling = (
+            qTagInfo and
+            qTagInfo.tagName and
+            qTagInfo.tagName == 'Calling Quest'
+        )
 
         qle.isNotCounted = (
             qle.isLikeHeader or
             qle.isTask or
             qle.isHidden or
             qle.isBounty or
-            (qle.isCampaign and not qle.isShadowlandsCampaign)
+            (qle.isCampaign and not qle.isShadowlandsLevel) or
+            qle.isShadowlandsCovenantCalling
         )
 
         qle.isCounted = not(qle.isNotCounted)

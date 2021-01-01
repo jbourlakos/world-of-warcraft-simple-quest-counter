@@ -115,3 +115,26 @@ function Util.Table.Select(t, predicate)
     end
     return result
 end
+
+
+function Util.Table.PrettyPrint(t)
+    -- Print contents of `tbl`, with indentation.
+    -- `indent` sets the initial level of indentation.
+    local function tprint (tbl, indent, print)
+        if not print then print = Util.Console.DPrint end
+        if not indent then indent = 0 end
+        for k, v in pairs(tbl) do
+            formatting = string.rep("  ", indent) .. k .. ": "
+            if type(v) == "table" then
+                print(formatting)
+            tprint(v, indent+1)
+            elseif type(v) == 'boolean' then
+                print(formatting .. tostring(v))
+            else
+                print(formatting .. v)
+            end
+        end
+    end
+    -- Print!
+    tprint(t)
+end
