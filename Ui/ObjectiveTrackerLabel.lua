@@ -24,11 +24,14 @@ local Events = SimpleQuestCounter.Events
 -- Initialize module
 ----
 
+-- if module is deactivated by Settings
+if (not S.activateObjectiveTrackerLabel) then return end
+
 local questHeader = ObjectiveTrackerBlocksFrame.QuestHeader
 
 local function QuestHeader_OnQuestsEvent(self)
-    local questsNumber = Quests:GetNumStandardQuests()
-    local maxQuestsNumber = Quests:GetMaxNumStandardQuests()
+    local questsNumber = Quests:GetNumCountedQuests()
+    local maxQuestsNumber = Quests:GetMaxNumCountedQuests()
 
     if ( not questsNumber or not maxQuestsNumber ) then
         return

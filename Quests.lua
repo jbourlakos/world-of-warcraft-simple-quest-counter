@@ -22,10 +22,10 @@ local Util = SimpleQuestCounter.Util
 
 -- Attributes
 Quests.maxNumQuests = nil
-Quests.maxNumStandardQuests = nil
+Quests.maxNumCountedQuests = nil
 Quests.numShownQuestLogEntries = nil
 Quests.numQuestLogEntries = nil
-Quests.numStandardQuests = nil
+Quests.numCountedQuests = nil
 Quests.questLogEntries = nil
 
 
@@ -34,9 +34,9 @@ Quests.questLogEntries = nil
 ----
 
 function Quests:PrintStatus()
-    local maxNumStandardQuests = Quests:GetMaxNumStandardQuests()
-    local numStandardQuests = Quests:GetNumStandardQuests()
-    Util.Console.FPrintf("Standard quests: %d (max: %d)", numStandardQuests, maxNumStandardQuests)
+    local maxNumCountedQuests = Quests:GetMaxNumCountedQuests()
+    local numCountedQuests = Quests:GetNumCountedQuests()
+    Util.Console.FPrintf("Counted quests: %d (max: %d)", numCountedQuests, maxNumCountedQuests)
 
     local numCampaignQuests = Quests:GetNumCampaignQuests()
     Util.Console.FPrintf("Campaign quests: %d", numCampaignQuests)
@@ -114,32 +114,35 @@ end
 
 function Quests.ToString(questItem)
     return string.format(
-        "%s%s%s%s%s%s%s %s",
+        "%s%s%s%s%s%s%s%s%s [%d]%s",
+        questItem.isCounted and '+' or '-',
         questItem.isHeader and '*' or '-',
         questItem.isTask and 'T' or '-',
         questItem.isHidden and 'H' or '-',
         questItem.isBounty and 'B' or '-',
+        questItem.isStory and '$' or '-',
         questItem.isCampaign and 'C' or '-',
+        questItem.isShadowlandsCampaign and '9' or '-',
         questItem.isScaling and '/' or '-',
-        questItem.isStandard and 'S' or '-',
+        questItem.level,
         questItem.title
     )
 end
 
 
-function Quests:GetNumStandardQuests()
-    return self.numStandardQuests
+function Quests:GetNumCountedQuests()
+    return self.numCountedQuests
 end
 
 
-function Quests:FetchNumStandardQuests()
+function Quests:FetchNumCountedQuests()
     local result = 0
     for index, questItem in pairs(self.questLogEntries) do
-        if (questItem.isStandard) then
+        if (questItem.isCounted) then
             result = result + 1
         end
     end
-    self.numStandardQuests = result
+    self.numCountedQuests = result
 end
 
 
@@ -149,7 +152,7 @@ function Quests:FetchAll()
     self:FetchNumShownQuestLogEntries()
     self:FetchNumQuestLogEntries()
     self:PopulateQuestLogEntries()
-    self:FetchNumStandardQuests()
+    self:FetchNumCountedQuests()
 end
 
 
@@ -172,18 +175,26 @@ function Quests:PopulateQuestLogEntries()
     -- populate with every entry
     local numEntries = self:GetNumShownQuestLogEntries()
     for questLogIndex = 1, numEntries do
-        -- Blizzard's data
+        -- fetch Blizzard's data for each quest log entry
         self.questLogEntries[questLogIndex] = C_QuestLog.GetInfo(questLogIndex)
         local qle = self.questLogEntries[questLogIndex]
-        -- Custom data
-        qle.isHeader = qle.isHeader or qle.level == 0
+        -- attach custom quest log entry attributes
+
+        qle.isLikeHeader = (qle.isHeader or qle.level == 0)
+
         qle.isCampaign = (qle.campaignID ~= nil)
-        qle.isStandard = (
-            not qle.isHeader and
-            not qle.isTask and
-            not qle.isHidden and
-            not qle.isBounty and
-            not qle.isCampaign )
+
+        qle.isShadowlandsCampaign = qle.isCampaign and qle.level > 50 and qle.level <= 60
+
+        qle.isNotCounted = (
+            qle.isLikeHeader or
+            qle.isTask or
+            qle.isHidden or
+            qle.isBounty or
+            (qle.isCampaign and not qle.isShadowlandsCampaign)
+        )
+
+        qle.isCounted = not(qle.isNotCounted)
     end
 end
 
@@ -210,13 +221,13 @@ function Quests:FetchNumShownQuestLogEntries()
 end
 
 
-function Quests:GetMaxNumStandardQuests()
-    return self.maxNumStandardQuests
+function Quests:GetMaxNumCountedQuests()
+    return self.maxNumCountedQuests
 end
 
 
 function Quests:FetchMaxNumStandardQuests()
-    self.maxNumStandardQuests = _G["MAX_QUESTS"] or 25
+    self.maxNumCountedQuests = _G["MAX_QUESTS"] or 25
 end
 
 

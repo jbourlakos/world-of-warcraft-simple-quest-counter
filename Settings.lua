@@ -23,4 +23,9 @@ SimpleQuestCounter.Settings = {
     --
     backdropColor = { 255/255, 255/255, 255/255, 128/255},
 
+    activateObjectiveTrackerLabel = true,
+    activateQuestCounterFrame = true,
+    activateQuestLogEntries = true,
+
+
 }

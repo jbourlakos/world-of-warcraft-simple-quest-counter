@@ -42,8 +42,8 @@ function tooltip._OnQuestsEvent()
     local w = tooltip.FontString:GetWidth() * 1.10
     local h = tooltip.FontString:GetHeight() * 1.60
 
-    local questsNumber = Quests:GetNumStandardQuests()
-    local maxQuestsNumber = Quests:GetMaxNumStandardQuests()
+    local questsNumber = Quests:GetNumCountedQuests()
+    local maxQuestsNumber = Quests:GetMaxNumCountedQuests()
     tooltip.FontString:SetFormattedText(S.fontStringTextFormat, questsNumber, maxQuestsNumber)
 
     local colorScale = questsNumber / maxQuestsNumber
@@ -57,5 +57,8 @@ end
 ----
 -- Initialize module
 ----
+
+-- if module is deactivated by Settings
+if (not S.activateQuestCounterFrame) then return end
 
 Events:SubscribeForQuestsEvent(tooltip, tooltip._OnQuestsEvent)

@@ -8,6 +8,7 @@ if not QuestScrollFrame.headerFramePool then return end
 
 local Events = SimpleQuestCounter.Events
 local Quests = SimpleQuestCounter.Quests
+local S = SimpleQuestCounter.Settings
 
 
 
@@ -16,13 +17,13 @@ function QuestLogEntries.CalculateQuestCountPerHeader()
     local currentHeader = nil
 
     for index, questItem in pairs(Quests:GetQuestLogEntries()) do
-        if (questItem.isHeader) then
+        if (questItem.isLikeHeader) then
             currentHeader = questItem.title
             if not countPerHeader[currentHeader] then
                 -- a header might appear more than once
                 countPerHeader[currentHeader] = 0
             end
-        elseif (questItem.isStandard) then
+        elseif (questItem.isCounted) then
             countPerHeader[currentHeader] = countPerHeader[currentHeader] + 1
         else
             -- do nothing
@@ -37,6 +38,10 @@ end
 ----
 -- Initialize module
 ----
+
+-- if module is deactivated by Settings
+if (not S.activateQuestLogEntries) then return end
+
 function QuestLogEntries._OnQuestsEvent(self, event, ...)
     local qHeaderPool = QuestScrollFrame.headerFramePool
 
