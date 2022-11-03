@@ -27,7 +27,6 @@ tooltip:SetResizable(false)
 tooltip.FontString = tooltip:CreateFontString(nil, S.fontStringDepthDevel, S.fontTemplate)
 local fontFileName, previousFontHeight, flags = tooltip.FontString:GetFont()
 tooltip.FontString:SetFont(fontFileName, previousFontHeight*S.fontSizeAdjustment, flags)
-tooltip.FontString:SetTextColor(unpack(S.questMinLimitColor), S.fontStringAlpha)
 tooltip.FontString:SetShadowColor(unpack(S.shadowColor))
 tooltip.FontString:SetFormattedText(S.fontStringTextFormat, 99, 99) -- default text, to calculate initial dimensions
 
