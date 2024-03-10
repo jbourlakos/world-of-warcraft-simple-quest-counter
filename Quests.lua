@@ -235,7 +235,7 @@ end
 
 
 function Quests:FetchMaxNumStandardQuests()
-    self.maxNumCountedQuests = _G["MAX_QUESTS"] or 25
+    self.maxNumCountedQuests = 35--_G["MAX_QUESTS"] or 35
 end
 
 
