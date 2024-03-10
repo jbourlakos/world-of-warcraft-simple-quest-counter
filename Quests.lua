@@ -198,7 +198,6 @@ function Quests:PopulateQuestLogEntries()
             qle.isTask or
             qle.isHidden or
             qle.isBounty or
-            (qle.isCampaign and not qle.isShadowlandsLevel) or
             qle.isShadowlandsCovenantCalling
         )
 
