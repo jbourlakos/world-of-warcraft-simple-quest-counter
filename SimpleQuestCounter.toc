@@ -1,4 +1,4 @@
-## Interface: 100000
+## Interface: 100205
 ## Title: Simple Quest Counter
 ## Author:  Rhetbull <Ioannis-Hellscream.EU>
 ## Version: v. 9.0-5
