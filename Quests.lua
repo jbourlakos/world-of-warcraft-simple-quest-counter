@@ -198,7 +198,6 @@ function Quests:PopulateQuestLogEntries()
             qle.isTask or
             qle.isHidden or
             qle.isBounty or
-            (qle.isCampaign and not qle.isShadowlandsLevel) or
             qle.isShadowlandsCovenantCalling
         )
 
@@ -235,7 +234,7 @@ end
 
 
 function Quests:FetchMaxNumStandardQuests()
-    self.maxNumCountedQuests = _G["MAX_QUESTS"] or 25
+    self.maxNumCountedQuests = 35 --_G["MAX_QUESTS"] or 35 (It's March 2024, why is this still not working!?!)
 end
 
 
